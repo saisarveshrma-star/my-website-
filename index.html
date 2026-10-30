@@ -1,0 +1,169 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MY WEBSITE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      background: #101827;
+      color: white;
+      font-family: Arial;
+      text-align: center;
+      padding: 25px;
+    }
+
+    h1 { color: orange; }
+
+    .box {
+      background: #1e293b;
+      padding: 25px;
+      border-radius: 15px;
+      max-width: 450px;
+      margin: 20px auto;
+    }
+
+    button {
+      background: orange;
+      color: #101827;
+      border: none;
+      padding: 13px;
+      margin: 7px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover { background: #ffbd45; }
+
+    #options button {
+      display: block;
+      width: 100%;
+    }
+
+    #message { color: orange; }
+  </style>
+</head>
+
+<body>
+
+  <h1>MY WEBSITE</h1>
+  <p>Welcome to the Ultimate Quiz!</p>
+
+  <div class="box" id="quiz">
+    <h2>Choose Your Category</h2>
+    <button onclick="startQuiz('Science')">Science</button>
+    <button onclick="startQuiz('Maths')">Maths</button>
+    <button onclick="startQuiz('Football')">Football</button>
+    <button onclick="startQuiz('General Knowledge')">General Knowledge</button>
+  </div>
+
+  <script>
+    const questions = {
+      Science: [
+        {q:"Which planet is called the Red Planet?",o:["Earth","Mars","Venus","Jupiter"],a:"Mars"},
+        {q:"What gas do plants absorb?",o:["Oxygen","Nitrogen","Carbon dioxide","Hydrogen"],a:"Carbon dioxide"},
+        {q:"Which organ pumps blood?",o:["Lungs","Heart","Brain","Kidney"],a:"Heart"},
+        {q:"What is the chemical formula of water?",o:["CO2","O2","H2O","NaCl"],a:"H2O"}
+      ],
+      Maths: [
+        {q:"What is 12 × 8?",o:["86","96","108","88"],a:"96"},
+        {q:"What is 100 ÷ 4?",o:["20","25","30","40"],a:"25"},
+        {q:"What is the square of 9?",o:["18","72","81","99"],a:"81"},
+        {q:"What is 45 + 55?",o:["90","95","100","110"],a:"100"}
+      ],
+      Football: [
+        {q:"Which country won the 2022 FIFA World Cup?",o:["France","Brazil","Argentina","Portugal"],a:"Argentina"},
+        {q:"Which club is known as Los Blancos?",o:["Barcelona","Real Madrid","Chelsea","Liverpool"],a:"Real Madrid"},
+        {q:"How many players start on one football team?",o:["9","10","11","12"],a:"11"},
+        {q:"Which country is Cristiano Ronaldo from?",o:["Spain","Portugal","Brazil","Italy"],a:"Portugal"}
+      ],
+      "General Knowledge": [
+        {q:"What is the capital of India?",o:["Mumbai","New Delhi","Chennai","Kolkata"],a:"New Delhi"},
+        {q:"Which is the largest ocean?",o:["Atlantic","Indian","Pacific","Arctic"],a:"Pacific"},
+        {q:"Who was India's first President?",o:["A.P.J. Abdul Kalam","Rajendra Prasad","Nehru","Sardar Patel"],a:"Rajendra Prasad"},
+        {q:"How many days are there in a leap year?",o:["365","366","364","360"],a:"366"}
+      ]
+    };
+
+    let category = "";
+    let current = 0;
+    let score = 0;
+    let answered = false;
+
+    function startQuiz(name) {
+      category = name;
+      current = 0;
+      score = 0;
+      showQuestion();
+    }
+
+    function showQuestion() {
+      answered = false;
+      const item = questions[category][current];
+
+      document.getElementById("quiz").innerHTML = `
+        <h2>${category}</h2>
+        <p>Question ${current + 1} of 4</p>
+        <h3>${item.q}</h3>
+        <div id="options">
+          ${item.o.map(option =>
+            `<button onclick="checkAnswer('${option.replace(/'/g, "\\'")}')">${option}</button>`
+          ).join("")}
+        </div>
+        <p id="message"></p>
+        <p>Score: ${score}</p>
+        <button id="next" onclick="nextQuestion()" style="display:none">NEXT</button>
+      `;
+    }
+
+    function checkAnswer(answer) {
+      if (answered) return;
+      answered = true;
+
+      const correct = questions[category][current].a;
+      const message = document.getElementById("message");
+
+      if (answer === correct) {
+        score += 10;
+        message.innerText = "Correct! +10 points 🎉";
+      } else {
+        message.innerText = "Incorrect! Correct answer: " + correct;
+      }
+
+      document.querySelectorAll("#options button").forEach(button => {
+        button.disabled = true;
+      });
+
+      document.querySelector("#quiz p:nth-of-type(2)").innerText = "Score: " + score;
+      document.getElementById("next").style.display = "inline-block";
+    }
+
+    function nextQuestion() {
+      current++;
+
+      if (current < 4) {
+        showQuestion();
+      } else {
+        document.getElementById("quiz").innerHTML = `
+          <h2>Quiz Completed! 🏆</h2>
+          <h1>${score} / 40</h1>
+          <p>Your final score</p>
+          <button onclick="goHome()">PLAY AGAIN</button>
+        `;
+      }
+    }
+
+    function goHome() {
+      document.getElementById("quiz").innerHTML = `
+        <h2>Choose Your Category</h2>
+        <button onclick="startQuiz('Science')">Science</button>
+        <button onclick="startQuiz('Maths')">Maths</button>
+        <button onclick="startQuiz('Football')">Football</button>
+        <button onclick="startQuiz('General Knowledge')">General Knowledge</button>
+      `;
+    }
+  </script>
+
+</body>
+</html>
